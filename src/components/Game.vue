@@ -33,7 +33,7 @@ h1 {
   display: block;
   width: 100%;
   max-width: 600px;
-  height: 100%;
+  height: auto;
   max-height: 600px;
   border: 1px solid green;
 

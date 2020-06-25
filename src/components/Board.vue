@@ -13,8 +13,8 @@
 import { Component, Vue, Provide } from "vue-property-decorator";
 import Square from "./Square.vue";
 
-const PLAYER_X = 'X';
-const PLAYER_Y = 'O';
+const PLAYER_X = "X";
+// const PLAYER_Y = "O";
 
 @Component({
   components: {
@@ -26,7 +26,7 @@ export default class Board extends Vue {
   board: string[] = [];
 
   mounted() {
-    this.board = Array(9).fill("-");
+    this.board = Array(9).fill(PLAYER_X);
     console.log("board", this.board);
   }
 }
@@ -50,15 +50,15 @@ export default class Board extends Vue {
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 450px) {
   .board {
-    --width: 50px;
+    --width: 90px;
   }
 }
 
-@media screen and (min-width: 401px) and (max-width: 600px) {
+@media screen and (min-width: 451px) and (max-width: 550px) {
   .board {
-    --width: 100px;
+    --width: 120px;
   }
 }
 </style>
