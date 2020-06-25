@@ -1,20 +1,50 @@
 <template>
   <div class="game">
     <h1>Vue Tic Tac Toe</h1>
-    <Board></Board>
+    <div class="info-container">
+      <p class="info">Next Player: {{ nextPlayer }}</p>
+      <p class="info">Winner: {{ winner }}</p>
+    </div>
+    <Board
+      :nextPlayer="nextPlayer"
+      @changePlayer="changePlayer"
+      @announcementWinner="announceWinner"
+    ></Board>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue, Provide } from "vue-property-decorator";
 import Board from "./Board.vue";
+import { STATE } from "@/constants";
+
+const PLAYER_X = "X";
+const PLAYER_O = "O";
 
 @Component({
   components: {
     Board
   }
 })
-export default class Game extends Vue {}
+export default class Game extends Vue {
+  @Provide()
+  nextPlayer = PLAYER_X;
+
+  @Provide()
+  winner = "";
+
+  changePlayer() {
+    this.nextPlayer = this.nextPlayer === PLAYER_X ? PLAYER_O : PLAYER_X;
+  }
+
+  announceWinner(state: STATE) {
+    if (state == STATE.WINNER) {
+      this.winner = this.nextPlayer;
+    } else if (state === STATE.TIED) {
+      this.winner = "tied";
+    }
+  }
+}
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
@@ -36,11 +66,21 @@ h1 {
   height: auto;
   max-height: 600px;
   border: 1px solid green;
+  padding: 0 1rem;
 
   .board {
-    margin: 1rem;
     border: 10px solid rebeccapurple;
     border-radius: 5px;
+  }
+
+  p.info {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .info-container {
+    display: flex;
+    justify-content: space-around;
   }
 }
 

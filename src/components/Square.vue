@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1>{{ value }}</h1>
+  <div @click="setMove">
+    <span>{{ value }}</span>
   </div>
 </template>
 
@@ -11,6 +11,15 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 export default class Square extends Vue {
   @Prop()
   value: string;
+
+  @Prop()
+  index: number;
+
+  setMove() {
+    if (!this.value) {
+      this.$emit("setMove", this.index);
+    }
+  }
 }
 </script>
 
@@ -22,7 +31,7 @@ div {
   align-items: center;
 }
 
-h1 {
+span {
   --cell-size: 4rem;
   color: goldenrod;
   font-size: var(--cell-size);
@@ -31,13 +40,13 @@ h1 {
 }
 
 @media screen and (max-width: 450px) {
-  h1 {
+  span {
     --cell-size: 2rem;
   }
 }
 
 @media screen and (min-width: 451px) and (max-width: 550px) {
-  h1 {
+  span {
     --cell-size: 3rem;
   }
 }
