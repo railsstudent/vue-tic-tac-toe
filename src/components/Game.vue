@@ -4,14 +4,21 @@
     <div class="info-container">
       <p class="info">Next Player: {{ nextPlayer }}</p>
       <p class="info">Winner: {{ winner }}</p>
-      <button @click="startGame" v-if="endGame">New Game</button>
     </div>
-    <Board
-      :nextPlayer="nextPlayer"
-      :endGame="endGame"
-      @changePlayer="changePlayer"
-      @announcementWinner="announceWinner"
-    ></Board>
+    <div class="main-container">
+      <Board
+        :nextPlayer="nextPlayer"
+        :endGame="endGame"
+        @changePlayer="changePlayer"
+        @announcementWinner="announceWinner"
+      ></Board>
+      <div class="button-container">
+        <button @click="startGame" v-if="endGame">New Game</button>
+        <fieldset class="moves">
+          <legend>Moves</legend>
+        </fieldset>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -77,11 +84,6 @@ h1 {
   display: block;
   padding: 0 1rem;
 
-  .board {
-    border: 10px solid rebeccapurple;
-    border-radius: 5px;
-  }
-
   p.info {
     font-size: 1.25rem;
     margin-bottom: 0.5rem;
@@ -93,10 +95,30 @@ h1 {
     padding: 0.5rem;
   }
 
-  button {
-    padding: 0.5rem;
-    border-radius: 10px;
-    background: lightblue;
+  .main-container {
+    display: flex;
+
+    .board {
+      border: 10px solid rebeccapurple;
+      border-radius: 5px;
+    }
+
+    .button-container {
+      padding-left: 1rem;
+      padding-right: 1rem;
+
+      button {
+        padding: 0.5rem;
+        margin-bottom: 10px;
+        font-size: 1rem;
+        border-radius: 10px;
+        background: lightblue;
+      }
+
+      .moves {
+        padding: 2rem;
+      }
+    }
   }
 }
 
