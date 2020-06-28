@@ -4,9 +4,11 @@
     <div class="info-container">
       <p class="info">Next Player: {{ nextPlayer }}</p>
       <p class="info">Winner: {{ winner }}</p>
+      <button @click="startGame" v-if="endGame">New Game</button>
     </div>
     <Board
       :nextPlayer="nextPlayer"
+      :endGame="endGame"
       @changePlayer="changePlayer"
       @announcementWinner="announceWinner"
     ></Board>
@@ -33,6 +35,9 @@ export default class Game extends Vue {
   @Provide()
   winner = "";
 
+  @Provide()
+  endGame = false;
+
   changePlayer() {
     this.nextPlayer = this.nextPlayer === PLAYER_X ? PLAYER_O : PLAYER_X;
   }
@@ -40,9 +45,18 @@ export default class Game extends Vue {
   announceWinner(state: STATE) {
     if (state == STATE.WINNER) {
       this.winner = this.nextPlayer;
+      this.endGame = true;
     } else if (state === STATE.TIED) {
       this.winner = "tied";
+      this.endGame = true;
+    } else if (state === STATE.ONGOING) {
+      this.winner = "N/A";
     }
+  }
+
+  startGame() {
+    this.endGame = false;
+    this.nextPlayer = PLAYER_X;
   }
 }
 </script>
@@ -61,11 +75,6 @@ h1 {
 
 .game {
   display: block;
-  width: 100%;
-  max-width: 600px;
-  height: auto;
-  max-height: 600px;
-  border: 1px solid green;
   padding: 0 1rem;
 
   .board {
@@ -81,6 +90,13 @@ h1 {
   .info-container {
     display: flex;
     justify-content: space-around;
+    padding: 0.5rem;
+  }
+
+  button {
+    padding: 0.5rem;
+    border-radius: 10px;
+    background: lightblue;
   }
 }
 

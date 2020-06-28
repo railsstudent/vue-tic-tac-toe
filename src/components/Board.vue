@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Provide, Prop } from "vue-property-decorator";
+import { Component, Vue, Provide, Prop, Watch } from "vue-property-decorator";
 import Square from "./Square.vue";
 import { STATE } from "../constants";
 
@@ -27,6 +27,16 @@ export default class Board extends Vue {
 
   @Prop()
   nextPlayer: string;
+
+  @Prop()
+  endGame: boolean;
+
+  @Watch("endGame", { immediate: true })
+  endGameUpdated(value: boolean) {
+    if (!value) {
+      this.board = Array(9).fill("");
+    }
+  }
 
   mounted() {
     this.board = Array(9).fill("");
@@ -87,11 +97,6 @@ export default class Board extends Vue {
   grid-template-rows: repeat(3, var(--width));
 
   padding: 0.5rem;
-
-  // border: 3px solid chocolate;
-  .square {
-    border: 2px solid brown;
-  }
 }
 
 @media screen and (max-width: 450px) {
