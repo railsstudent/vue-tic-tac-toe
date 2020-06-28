@@ -77,6 +77,7 @@ h1 {
   color: goldenrod;
   font-size: var(--title-font);
   font-weight: 600;
+  text-decoration: underline;
   text-align: center;
   height: 3rem;
 }
@@ -91,9 +92,13 @@ h1 {
   }
 
   .main-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-areas: "board sidebar";
 
     .left {
+      grid-area: board;
+
       .play-container {
         display: flex;
         justify-content: space-around;
@@ -110,6 +115,8 @@ h1 {
       padding-left: 1rem;
       padding-right: 1rem;
 
+      grid-area: sidebar;
+
       button {
         padding: 0.5rem;
         margin-bottom: 10px;
@@ -125,15 +132,23 @@ h1 {
   }
 }
 
-@media screen and (max-width: 400px) {
+@media screen and (max-width: 550px) {
+  .game .main-container {
+    grid-template-areas:
+      "sidebar"
+      "board";
+
+    .action-container {
+      button {
+        font-size: 0.85rem;
+        padding: 0.25rem;
+        border-radius: 5px;
+      }
+    }
+  }
+
   h1 {
     --title-font: 1.5em;
-  }
-}
-
-@media screen and (min-width: 401px) and (max-width: 600px) {
-  h1 {
-    --title-font: 1.75em;
   }
 }
 </style>
