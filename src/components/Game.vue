@@ -1,18 +1,20 @@
 <template>
   <div class="game">
     <h1>Vue Tic Tac Toe</h1>
-    <div class="info-container">
-      <p class="info">Next Player: {{ nextPlayer }}</p>
-      <p class="info">Winner: {{ winner }}</p>
-    </div>
     <div class="main-container">
-      <Board
-        :nextPlayer="nextPlayer"
-        :endGame="endGame"
-        @changePlayer="changePlayer"
-        @announcementWinner="announceWinner"
-      ></Board>
-      <div class="button-container">
+      <div class="left">
+        <div class="play-container">
+          <p class="info">Next Player: {{ nextPlayer }}</p>
+          <p class="info">Winner: {{ winner }}</p>
+        </div>
+        <Board
+          :nextPlayer="nextPlayer"
+          :endGame="endGame"
+          @changePlayer="changePlayer"
+          @announcementWinner="announceWinner"
+        ></Board>
+      </div>
+      <div class="action-container">
         <button @click="startGame" v-if="endGame">New Game</button>
         <fieldset class="moves">
           <legend>Moves</legend>
@@ -40,7 +42,7 @@ export default class Game extends Vue {
   nextPlayer = PLAYER_X;
 
   @Provide()
-  winner = "";
+  winner = "N/A";
 
   @Provide()
   endGame = false;
@@ -56,14 +58,13 @@ export default class Game extends Vue {
     } else if (state === STATE.TIED) {
       this.winner = "tied";
       this.endGame = true;
-    } else if (state === STATE.ONGOING) {
-      this.winner = "N/A";
     }
   }
 
   startGame() {
     this.endGame = false;
     this.nextPlayer = PLAYER_X;
+    this.winner = "N/A";
   }
 }
 </script>
@@ -89,21 +90,23 @@ h1 {
     margin-bottom: 0.5rem;
   }
 
-  .info-container {
-    display: flex;
-    justify-content: space-around;
-    padding: 0.5rem;
-  }
-
   .main-container {
     display: flex;
 
-    .board {
-      border: 10px solid rebeccapurple;
-      border-radius: 5px;
+    .left {
+      .play-container {
+        display: flex;
+        justify-content: space-around;
+        padding: 0.5rem;
+      }
+
+      .board {
+        border: 10px solid rebeccapurple;
+        border-radius: 5px;
+      }
     }
 
-    .button-container {
+    .action-container {
       padding-left: 1rem;
       padding-right: 1rem;
 

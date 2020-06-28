@@ -25,6 +25,9 @@ export default class Board extends Vue {
   @Provide()
   board: string[] = [];
 
+  @Provide()
+  gameState = STATE.ONGOING;
+
   @Prop()
   nextPlayer: string;
 
@@ -35,6 +38,7 @@ export default class Board extends Vue {
   endGameUpdated(value: boolean) {
     if (!value) {
       this.board = Array(9).fill("");
+      this.gameState = STATE.ONGOING;
     }
   }
 
@@ -43,16 +47,19 @@ export default class Board extends Vue {
   }
 
   update(index: number) {
+    if (this.gameState !== STATE.ONGOING) {
+      return;
+    }
     this.board = this.board.reduce(
       (acc, v, i) =>
         i === index ? acc.concat(this.nextPlayer) : acc.concat(v),
       [] as string[]
     );
-    const gameState = this.checkWinner();
-    if (gameState === STATE.ONGOING) {
+    this.gameState = this.checkWinner();
+    if (this.gameState === STATE.ONGOING) {
       this.$emit("changePlayer");
     } else {
-      this.$emit("announcementWinner", gameState);
+      this.$emit("announcementWinner", this.gameState);
     }
   }
 
@@ -70,7 +77,6 @@ export default class Board extends Vue {
 
     // let hasWinner = true;
     for (let i = 0; i < winningMoves.length; i++) {
-      // hasWinner = true;
       const hasWinner =
         winningMoves[i].filter(m => this.board[m] !== this.nextPlayer)
           .length === 0;
