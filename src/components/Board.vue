@@ -8,6 +8,7 @@
       :index="i"
       @setMove="update"
     ></Square>
+    histories: {{ histories }}
   </div>
 </template>
 
@@ -28,6 +29,9 @@ export default class Board extends Vue {
   @Provide()
   gameState = STATE.ONGOING;
 
+  @Provide()
+  histories: string[][] = [];
+
   @Prop()
   nextPlayer: string;
 
@@ -39,25 +43,33 @@ export default class Board extends Vue {
     if (!value) {
       this.board = Array(9).fill("");
       this.gameState = STATE.ONGOING;
+      this.histories = [[...this.board]];
+      this.$emit("generateMoves", this.histories);
     }
   }
 
   mounted() {
     this.board = Array(9).fill("");
+    this.histories = [[...this.board]];
+    this.$emit("generateMoves", this.histories);
   }
 
   update(index: number) {
     if (this.gameState !== STATE.ONGOING) {
       return;
     }
-    this.board = this.board.reduce(
+    const newBoard = this.board.reduce(
       (acc, v, i) =>
         i === index ? acc.concat(this.nextPlayer) : acc.concat(v),
       [] as string[]
     );
+    this.histories = [...this.histories, newBoard];
+    this.board = this.histories[this.histories.length - 1];
+
     this.gameState = this.checkWinner();
     if (this.gameState === STATE.ONGOING) {
       this.$emit("changePlayer");
+      this.$emit("generateMoves", this.histories);
     } else {
       this.$emit("announcementWinner", this.gameState);
     }

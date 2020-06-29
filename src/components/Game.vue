@@ -12,12 +12,20 @@
           :endGame="endGame"
           @changePlayer="changePlayer"
           @announcementWinner="announceWinner"
+          @generateMoves="generateMoves"
         ></Board>
       </div>
       <div class="action-container">
         <button @click="startGame" v-if="endGame">New Game</button>
         <fieldset class="moves">
           <legend>Moves</legend>
+          <button
+            v-for="(_, i) of histories"
+            :key="`move-${i}`"
+            @click="goBackToMove($event, i)"
+          >
+            Move {{ i }}
+          </button>
         </fieldset>
       </div>
     </div>
@@ -47,6 +55,9 @@ export default class Game extends Vue {
   @Provide()
   endGame = false;
 
+  @Provide()
+  histories: string[][] = [];
+
   changePlayer() {
     this.nextPlayer = this.nextPlayer === PLAYER_X ? PLAYER_O : PLAYER_X;
   }
@@ -65,6 +76,16 @@ export default class Game extends Vue {
     this.endGame = false;
     this.nextPlayer = PLAYER_X;
     this.winner = "N/A";
+  }
+
+  generateMoves(histories: string[][]) {
+    this.histories = [...histories];
+  }
+
+  goBackToMove(event: Event, idx: number) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    console.log("idx", idx);
   }
 }
 </script>
@@ -126,7 +147,11 @@ h1 {
       }
 
       .moves {
-        padding: 2rem;
+        padding: 0.75rem;
+      }
+
+      fieldset {
+        display: flex;
       }
     }
   }
@@ -143,6 +168,13 @@ h1 {
         font-size: 0.85rem;
         padding: 0.25rem;
         border-radius: 5px;
+      }
+
+      fieldset {
+        display: block;
+        button {
+          margin-right: 0.25rem;
+        }
       }
     }
   }
