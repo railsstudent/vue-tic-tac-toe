@@ -25,6 +25,7 @@
             v-for="(_, i) of histories"
             :key="`move-${i}`"
             @click="goBackToMove($event, i)"
+            :disabled="endGame"
           >
             Move {{ i }}
           </button>
@@ -101,7 +102,9 @@ export default class Game extends Vue {
     if (this.endGame) {
       return;
     }
-    console.log("idx", idx);
+    this.board = [...this.histories[idx]];
+    this.histories.splice(idx + 1, this.histories.length - 1 - idx);
+    this.nextPlayer = idx % 2 === 0 ? PLAYER_X : PLAYER_O;
   }
 }
 </script>

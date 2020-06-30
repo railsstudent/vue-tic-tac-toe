@@ -8,7 +8,6 @@
       :index="i"
       @setMove="update"
     ></Square>
-    histories: {{ histories }}
   </div>
 </template>
 
