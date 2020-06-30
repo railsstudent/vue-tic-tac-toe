@@ -24,13 +24,13 @@ import { STATE } from "../constants";
 })
 export default class Board extends Vue {
   @Provide()
-  board: string[] = [];
-
-  @Provide()
   gameState = STATE.ONGOING;
 
-  @Provide()
-  histories: string[][] = [];
+  @Prop()
+  board: string[];
+
+  @Prop()
+  histories: string[][];
 
   @Prop()
   nextPlayer: string;
@@ -39,43 +39,34 @@ export default class Board extends Vue {
   endGame: boolean;
 
   @Watch("endGame", { immediate: true })
-  endGameUpdated(value: boolean) {
-    if (!value) {
-      this.board = Array(9).fill("");
+  endGameUpdated() {
+    if (!this.endGame) {
       this.gameState = STATE.ONGOING;
-      this.histories = [[...this.board]];
-      this.$emit("generateMoves", this.histories);
     }
-  }
-
-  mounted() {
-    this.board = Array(9).fill("");
-    this.histories = [[...this.board]];
-    this.$emit("generateMoves", this.histories);
   }
 
   update(index: number) {
     if (this.gameState !== STATE.ONGOING) {
       return;
     }
+
     const newBoard = this.board.reduce(
       (acc, v, i) =>
         i === index ? acc.concat(this.nextPlayer) : acc.concat(v),
       [] as string[]
     );
-    this.histories = [...this.histories, newBoard];
-    this.board = this.histories[this.histories.length - 1];
 
-    this.gameState = this.checkWinner();
+    this.gameState = this.checkWinner(newBoard);
     if (this.gameState === STATE.ONGOING) {
       this.$emit("changePlayer");
-      this.$emit("generateMoves", this.histories);
+      this.$emit("allMoves", [...this.histories, newBoard]);
     } else {
+      this.$emit("allMoves", [...this.histories, newBoard]);
       this.$emit("announcementWinner", this.gameState);
     }
   }
 
-  checkWinner() {
+  checkWinner(newBoard: string[]) {
     const winningMoves = [
       [0, 1, 2],
       [3, 4, 5],
@@ -90,13 +81,13 @@ export default class Board extends Vue {
     // let hasWinner = true;
     for (let i = 0; i < winningMoves.length; i++) {
       const hasWinner =
-        winningMoves[i].filter(m => this.board[m] !== this.nextPlayer)
-          .length === 0;
+        winningMoves[i].filter(m => newBoard[m] !== this.nextPlayer).length ===
+        0;
       if (hasWinner) {
         return STATE.WINNER;
       }
     }
-    if (this.board.filter(v => v !== "").length === 9) {
+    if (newBoard.filter(v => v !== "").length === 9) {
       return STATE.TIED;
     }
     return STATE.ONGOING;

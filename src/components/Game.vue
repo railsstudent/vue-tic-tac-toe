@@ -9,10 +9,12 @@
         </div>
         <Board
           :nextPlayer="nextPlayer"
+          :board="board"
+          :histories="histories"
           :endGame="endGame"
           @changePlayer="changePlayer"
           @announcementWinner="announceWinner"
-          @generateMoves="generateMoves"
+          @allMoves="generateMoves"
         ></Board>
       </div>
       <div class="action-container">
@@ -47,6 +49,12 @@ const PLAYER_O = "O";
 })
 export default class Game extends Vue {
   @Provide()
+  board: string[] = [];
+
+  @Provide()
+  histories: string[][] = [];
+
+  @Provide()
   nextPlayer = PLAYER_X;
 
   @Provide()
@@ -55,8 +63,10 @@ export default class Game extends Vue {
   @Provide()
   endGame = false;
 
-  @Provide()
-  histories: string[][] = [];
+  mounted() {
+    this.board = Array(9).fill("");
+    this.histories = [[...this.board]];
+  }
 
   changePlayer() {
     this.nextPlayer = this.nextPlayer === PLAYER_X ? PLAYER_O : PLAYER_X;
@@ -76,15 +86,21 @@ export default class Game extends Vue {
     this.endGame = false;
     this.nextPlayer = PLAYER_X;
     this.winner = "N/A";
+    this.histories = [Array(9).fill("")];
+    this.board = [...this.histories[this.histories.length - 1]];
   }
 
   generateMoves(histories: string[][]) {
     this.histories = [...histories];
+    this.board = [...this.histories[this.histories.length - 1]];
   }
 
   goBackToMove(event: Event, idx: number) {
     event.preventDefault();
     event.stopImmediatePropagation();
+    if (this.endGame) {
+      return;
+    }
     console.log("idx", idx);
   }
 }
