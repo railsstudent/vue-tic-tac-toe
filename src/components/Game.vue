@@ -2,6 +2,20 @@
   <div class="game">
     <h1>Vue Tic Tac Toe</h1>
     <div class="main-container">
+      <div class="action-container">
+        <button @click="startGame" v-if="endGame">New Game</button>
+        <fieldset class="moves">
+          <legend>Moves</legend>
+          <button
+            v-for="(_, i) of histories"
+            :key="`move-${i}`"
+            @click="goBackToMove($event, i)"
+            :disabled="endGame"
+          >
+            Move {{ i }}
+          </button>
+        </fieldset>
+      </div>
       <div class="left">
         <div class="play-container">
           <p class="info">Next Player: {{ nextPlayer }}</p>
@@ -16,20 +30,6 @@
           @announcementWinner="announceWinner"
           @allMoves="generateMoves"
         ></Board>
-      </div>
-      <div class="action-container">
-        <button @click="startGame" v-if="endGame">New Game</button>
-        <fieldset class="moves">
-          <legend>Moves</legend>
-          <button
-            v-for="(_, i) of histories"
-            :key="`move-${i}`"
-            @click="goBackToMove($event, i)"
-            :disabled="endGame"
-          >
-            Move {{ i }}
-          </button>
-        </fieldset>
       </div>
     </div>
   </div>
@@ -134,7 +134,7 @@ h1 {
   .main-container {
     display: grid;
     grid-template-columns: auto auto;
-    grid-template-areas: "board sidebar";
+    grid-template-areas: "sidebar board";
 
     .left {
       grid-area: board;
