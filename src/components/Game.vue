@@ -7,21 +7,20 @@
         <p class="info">Winner: {{ winner }}</p>
       </div>
 
-      <div class="action-container">
-        <div class="moves" v-if="endGame">
-          <button class="button new-game" @click="startGame">New Game</button>
-        </div>
-        <div class="moves">
-          <button
-            class="button"
-            v-for="(_, i) of histories"
-            :key="`move-${i}`"
-            @click="goBackToMove($event, i)"
-            :disabled="endGame"
-          >
-            {{ i !== 0 ? `Move ${i}` : "Start Game" }}
-          </button>
-        </div>
+      <div class="game" v-if="endGame">
+        <button class="button new-game" @click="startGame">New Game</button>
+      </div>
+
+      <div class="moves">
+        <button
+          class="button"
+          v-for="(_, i) of histories"
+          :key="`move-${i}`"
+          @click="goBackToMove($event, i)"
+          :disabled="endGame"
+        >
+          {{ i !== 0 ? `Move ${i}` : "Start Game" }}
+        </button>
       </div>
       <div class="left">
         <Board
@@ -138,9 +137,11 @@ h1 {
     display: grid;
     grid-template-columns: auto auto;
     grid-auto-rows: auto;
+    // grid-template-rows: auto auto minmax(380px, max-content);
     grid-template-areas:
       "player player"
-      "sidebar board";
+      "game   board"
+      "moves  board";
     grid-gap: 0.5rem;
 
     .play-container {
@@ -162,30 +163,36 @@ h1 {
       }
     }
 
-    .action-container {
-      grid-area: sidebar;
+    .button {
+      padding: 0.35rem 0.25rem;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      border-radius: 10px;
+      background: lighten(lightpink, 10%);
+      border-color: lightpink;
+      width: 6rem;
+
+      &.new-game {
+        background: plum;
+        border-color: darken(plum, 10%);
+        margin-bottom: 0;
+      }
+    }
+
+    .moves,
+    .game {
+      padding: 0.5rem 0.5rem 0 0.5rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .game {
+      grid-area: game;
+    }
+
+    .moves {
+      grid-area: moves;
       border: 2px solid rebeccapurple;
-
-      .button {
-        padding: 0.35rem 0.25rem;
-        margin-bottom: 0.5rem;
-        font-size: 1rem;
-        border-radius: 10px;
-        background: lighten(lightpink, 10%);
-        border-color: lightpink;
-        width: 6rem;
-
-        &.new-game {
-          background: plum;
-          border-color: darken(plum, 10%);
-        }
-      }
-
-      .moves {
-        padding: 0.5rem 0.5rem 0 0.5rem;
-        display: flex;
-        flex-direction: column;
-      }
     }
   }
 }
@@ -193,10 +200,12 @@ h1 {
 @media screen and (max-width: 600px) {
   .game .main-container {
     grid-template-columns: auto;
+    // grid-template-rows: repeat(4, auto);
     grid-template-areas:
       "player"
-      "sidebar"
-      "board";
+      "game"
+      "board"
+      "moves";
     grid-column-gap: 0;
 
     .play-container {
@@ -204,23 +213,22 @@ h1 {
       margin-bottom: 0.5rem;
     }
 
-    .action-container {
+    .button {
+      font-size: 0.85rem;
+      border-radius: 5px;
+    }
+
+    .moves,
+    .game {
+      flex-direction: row;
+      flex-wrap: wrap;
+
       .button {
-        font-size: 0.85rem;
-        border-radius: 5px;
-      }
-
-      .moves {
-        flex-direction: row;
-        flex-wrap: wrap;
-
-        .button {
-          margin-right: 0.25rem;
-          flex-grow: 1;
-          flex-shrink: 0;
-          flex-basis: 20%;
-          width: 0;
-        }
+        margin-right: 0.25rem;
+        flex-grow: 1;
+        flex-shrink: 0;
+        flex-basis: 20%;
+        width: 0;
       }
     }
   }
