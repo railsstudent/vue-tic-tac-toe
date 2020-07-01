@@ -113,15 +113,9 @@ export default class Board extends Vue {
   }
 }
 
-@media screen and (min-width: 451px) and (max-width: 550px) {
+@media screen and (min-width: 451px) and (max-width: 600px) {
   .board {
     --width: 110px;
-  }
-}
-
-@media screen and (min-width: 551px) and (max-width: 600px) {
-  .board {
-    --width: 120px;
   }
 }
 </style>

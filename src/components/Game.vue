@@ -4,11 +4,12 @@
     <div class="main-container">
       <div class="play-container">
         <p class="info">Next Player: {{ nextPlayer }}</p>
-        <p class="info">Winner: {{ winner }}</p>
-      </div>
-
-      <div class="game" v-if="endGame">
-        <button class="button new-game" @click="startGame">New Game</button>
+        <p class="info winner">Winner: {{ winner }}</p>
+        <div class="info">
+          <button class="button new-game" v-if="endGame" @click="startGame">
+            New Game
+          </button>
+        </div>
       </div>
 
       <div class="moves">
@@ -128,30 +129,35 @@ h1 {
   display: block;
   padding: 0 1rem;
 
-  p.info {
-    font-size: 1.25rem;
-    // margin-bottom: 0.5rem;
-  }
-
   .main-container {
     display: grid;
     grid-template-columns: auto auto;
     grid-auto-rows: auto;
-    // grid-template-rows: auto auto minmax(380px, max-content);
     grid-template-areas:
       "player player"
-      "game   board"
-      "moves  board";
+      "moves   board";
     grid-gap: 0.5rem;
 
     .play-container {
       grid-area: player;
       display: flex;
-      justify-content: space-between;
-      padding: 0.5rem;
+      padding: 0.5rem 0;
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
 
-      margin-top: 1rem;
-      margin-bottom: 1rem;
+      .info {
+        flex: 0 0 33.33%;
+        font-size: 1.25rem;
+
+        &.winner {
+          font-weight: 600;
+        }
+      }
+
+      div.info {
+        display: flex;
+        justify-content: flex-end;
+      }
     }
 
     .left {
@@ -179,8 +185,7 @@ h1 {
       }
     }
 
-    .moves,
-    .game {
+    .moves {
       padding: 0.5rem 0.5rem 0 0.5rem;
       display: flex;
       flex-direction: column;
@@ -200,26 +205,30 @@ h1 {
 @media screen and (max-width: 600px) {
   .game .main-container {
     grid-template-columns: auto;
-    // grid-template-rows: repeat(4, auto);
     grid-template-areas:
       "player"
-      "game"
       "board"
       "moves";
     grid-column-gap: 0;
-
-    .play-container {
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
 
     .button {
       font-size: 0.85rem;
       border-radius: 5px;
     }
 
-    .moves,
-    .game {
+    .play-container {
+      flex-wrap: wrap;
+
+      .info {
+        flex-basis: 48%;
+      }
+
+      div.info {
+        justify-content: flex-start;
+      }
+    }
+
+    .moves {
       flex-direction: row;
       flex-wrap: wrap;
 
