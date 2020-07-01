@@ -2,25 +2,28 @@
   <div class="game">
     <h1>Vue Tic Tac Toe</h1>
     <div class="main-container">
+      <div class="play-container">
+        <p class="info">Next Player: {{ nextPlayer }}</p>
+        <p class="info">Winner: {{ winner }}</p>
+      </div>
+
       <div class="action-container">
-        <button @click="startGame" v-if="endGame">New Game</button>
-        <fieldset class="moves">
-          <legend>Moves</legend>
+        <div class="moves" v-if="endGame">
+          <button class="button new-game" @click="startGame">New Game</button>
+        </div>
+        <div class="moves">
           <button
+            class="button"
             v-for="(_, i) of histories"
             :key="`move-${i}`"
             @click="goBackToMove($event, i)"
             :disabled="endGame"
           >
-            Move {{ i }}
+            {{ i !== 0 ? `Move ${i}` : "Start Game" }}
           </button>
-        </fieldset>
+        </div>
       </div>
       <div class="left">
-        <div class="play-container">
-          <p class="info">Next Player: {{ nextPlayer }}</p>
-          <p class="info">Winner: {{ winner }}</p>
-        </div>
         <Board
           :nextPlayer="nextPlayer"
           :board="board"
@@ -128,71 +131,95 @@ h1 {
 
   p.info {
     font-size: 1.25rem;
-    margin-bottom: 0.5rem;
+    // margin-bottom: 0.5rem;
   }
 
   .main-container {
     display: grid;
     grid-template-columns: auto auto;
-    grid-template-areas: "sidebar board";
+    grid-auto-rows: auto;
+    grid-template-areas:
+      "player player"
+      "sidebar board";
+    grid-gap: 0.5rem;
+
+    .play-container {
+      grid-area: player;
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem;
+
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+    }
 
     .left {
       grid-area: board;
 
-      .play-container {
-        display: flex;
-        justify-content: space-around;
-        padding: 0.5rem;
-      }
-
       .board {
-        border: 10px solid rebeccapurple;
+        border: 5px solid rebeccapurple;
         border-radius: 5px;
       }
     }
 
     .action-container {
-      padding-left: 1rem;
-      padding-right: 1rem;
-
       grid-area: sidebar;
+      border: 2px solid rebeccapurple;
 
-      button {
-        padding: 0.5rem;
-        margin-bottom: 10px;
+      .button {
+        padding: 0.35rem 0.25rem;
+        margin-bottom: 0.5rem;
         font-size: 1rem;
         border-radius: 10px;
-        background: lightblue;
+        background: lighten(lightpink, 10%);
+        border-color: lightpink;
+        width: 6rem;
+
+        &.new-game {
+          background: plum;
+          border-color: darken(plum, 10%);
+        }
       }
 
       .moves {
-        padding: 0.75rem;
-      }
-
-      fieldset {
+        padding: 0.5rem 0.5rem 0 0.5rem;
         display: flex;
+        flex-direction: column;
       }
     }
   }
 }
 
-@media screen and (max-width: 550px) {
+@media screen and (max-width: 600px) {
   .game .main-container {
+    grid-template-columns: auto;
     grid-template-areas:
+      "player"
       "sidebar"
       "board";
+    grid-column-gap: 0;
+
+    .play-container {
+      margin-top: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
 
     .action-container {
-      button {
+      .button {
         font-size: 0.85rem;
-        padding: 0.25rem;
         border-radius: 5px;
       }
 
-      fieldset {
-        display: block;
-        button {
+      .moves {
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        .button {
           margin-right: 0.25rem;
+          flex-grow: 1;
+          flex-shrink: 0;
+          flex-basis: 20%;
+          width: 0;
         }
       }
     }

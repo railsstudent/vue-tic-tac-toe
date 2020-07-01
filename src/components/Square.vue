@@ -1,6 +1,6 @@
 <template>
   <div @click="setMove">
-    <span>{{ value }}</span>
+    <span :class="`player-${value}`">{{ value }}</span>
   </div>
 </template>
 
@@ -35,10 +35,17 @@ div {
 
 span {
   --cell-size: 4rem;
-  color: goldenrod;
   font-size: var(--cell-size);
   font-weight: 600;
   margin: 1rem auto;
+
+  &.player-X {
+    color: goldenrod;
+  }
+
+  &.player-O {
+    color: limegreen;
+  }
 }
 
 @media screen and (max-width: 450px) {
