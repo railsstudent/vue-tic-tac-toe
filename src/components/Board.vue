@@ -7,6 +7,7 @@
       :value="square"
       :index="i"
       @setMove="update"
+      :class="winningClass(i)"
     ></Square>
   </div>
 </template>
@@ -14,7 +15,8 @@
 <script lang="ts">
 import { Component, Vue, Provide, Prop, Watch } from "vue-property-decorator";
 import Square from "./Square.vue";
-import { STATE } from "../constants";
+import { STATE } from "@/constants";
+import { Direction } from "@/types";
 
 @Component({
   components: {
@@ -24,6 +26,12 @@ import { STATE } from "../constants";
 export default class Board extends Vue {
   @Provide()
   gameState = STATE.ONGOING;
+
+  @Provide()
+  which: number[] = [];
+
+  @Provide()
+  direction?: Direction;
 
   @Prop()
   board: string[];
@@ -41,7 +49,16 @@ export default class Board extends Vue {
   endGameUpdated() {
     if (!this.endGame) {
       this.gameState = STATE.ONGOING;
+      this.which = [];
+      this.direction = undefined;
     }
+  }
+
+  winningClass(i: number) {
+    if (this.which.indexOf(i) >= 0) {
+      return `winning-${this.direction}`;
+    }
+    return "";
   }
 
   update(index: number) {
@@ -55,7 +72,11 @@ export default class Board extends Vue {
       [] as string[]
     );
 
-    this.gameState = this.checkWinner(newBoard);
+    const { state, which = [], direction = undefined } =
+      this.checkWinner(newBoard) || {};
+    this.gameState = state;
+    this.which = which;
+    this.direction = direction;
     if (this.gameState === STATE.ONGOING) {
       this.$emit("changePlayer");
       this.$emit("allMoves", [...this.histories, newBoard]);
@@ -76,6 +97,16 @@ export default class Board extends Vue {
       [0, 4, 8],
       [2, 4, 6]
     ];
+    const directions = [
+      Direction.HORT,
+      Direction.HORT,
+      Direction.HORT,
+      Direction.VERTICAL,
+      Direction.VERTICAL,
+      Direction.VERTICAL,
+      Direction.LEFT_DIAG,
+      Direction.RIGHT_DIAG
+    ];
 
     // let hasWinner = true;
     for (let i = 0; i < winningMoves.length; i++) {
@@ -83,13 +114,17 @@ export default class Board extends Vue {
         winningMoves[i].filter(m => newBoard[m] !== this.nextPlayer).length ===
         0;
       if (hasWinner) {
-        return STATE.WINNER;
+        return {
+          state: STATE.WINNER,
+          which: winningMoves[i],
+          direction: directions[i]
+        };
       }
     }
     if (newBoard.filter(v => v !== "").length === 9) {
-      return STATE.TIED;
+      return { state: STATE.TIED };
     }
-    return STATE.ONGOING;
+    return { state: STATE.ONGOING };
   }
 }
 </script>
@@ -105,6 +140,32 @@ export default class Board extends Vue {
   grid-template-rows: repeat(3, var(--width));
 
   padding: 0.5rem;
+
+  .square {
+    position: relative;
+
+    &.winning {
+      &-hort:after {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        z-index: 1;
+        width: 100%;
+        border: 1px solid black;
+      }
+
+      &-vertical:after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 0;
+        z-index: 1;
+        height: 100%;
+        border: 1px solid black;
+      }
+    }
+  }
 }
 
 @media screen and (max-width: 450px) {
