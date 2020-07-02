@@ -234,9 +234,7 @@ h1 {
 
       .button {
         margin-right: 0.25rem;
-        flex-grow: 1;
-        flex-shrink: 0;
-        flex-basis: 20%;
+        flex: 1 0 20%;
         width: 0;
       }
     }

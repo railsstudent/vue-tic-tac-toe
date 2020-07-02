@@ -131,6 +131,27 @@ export default class Board extends Vue {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
+@mixin baseStrikethrough() {
+  content: "";
+  position: absolute;
+  z-index: 1;
+  border: 1px solid black;
+}
+
+@mixin strikethrough($left: 0, $top: 50%, $width: 100%, $height: 0) {
+  @include baseStrikethrough();
+  left: $left;
+  top: $top;
+  width: $width;
+  height: $height;
+}
+
+@mixin strikethroughDiagonal($rotation) {
+  @include baseStrikethrough();
+  height: 140%;
+  transform: rotate($rotation);
+}
+
 .board {
   --width: 130px;
 
@@ -146,23 +167,19 @@ export default class Board extends Vue {
 
     &.winning {
       &-hort:after {
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 50%;
-        z-index: 1;
-        width: 100%;
-        border: 1px solid black;
+        @include strikethrough(0, 50%, 100%, inherit);
       }
 
       &-vertical:after {
-        content: "";
-        position: absolute;
-        left: 50%;
-        top: 0;
-        z-index: 1;
-        height: 100%;
-        border: 1px solid black;
+        @include strikethrough(50%, 0, inherit, 100%);
+      }
+
+      &-left-diag:after {
+        @include strikethroughDiagonal(-45deg);
+      }
+
+      &-right-diag:after {
+        @include strikethroughDiagonal(45deg);
       }
     }
   }
