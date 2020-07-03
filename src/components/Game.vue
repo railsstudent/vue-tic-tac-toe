@@ -141,7 +141,7 @@ h1 {
     .play-container {
       grid-area: player;
       display: flex;
-      padding: 0.5rem 0;
+      padding: 0.5rem;
       margin-top: 0.5rem;
       margin-bottom: 0.5rem;
 
@@ -157,11 +157,14 @@ h1 {
       div.info {
         display: flex;
         justify-content: flex-end;
+        align-items: flex-start;
       }
     }
 
     .left {
       grid-area: board;
+      display: flex;
+      justify-content: center;
 
       .board {
         border: 5px solid rebeccapurple;
@@ -225,6 +228,7 @@ h1 {
 
       div.info {
         justify-content: flex-start;
+        align-content: flex-start;
       }
     }
 
