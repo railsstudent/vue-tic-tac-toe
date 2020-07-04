@@ -6,7 +6,11 @@
         <p class="info">Next Player: {{ nextPlayer }}</p>
         <p class="info winner">Winner: {{ winner }}</p>
         <div class="info">
-          <button class="button new-game" v-if="endGame" @click="startGame">
+          <button
+            class="button new-game"
+            :disabled="!endGame"
+            @click="startGame"
+          >
             New Game
           </button>
         </div>
