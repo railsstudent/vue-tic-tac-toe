@@ -14,6 +14,13 @@
             New Game
           </button>
         </div>
+        <div class="info">
+          {{ opponent }}
+          <select v-model="opponent" :disabled="!endGame">
+            <option value="player">vs Human</option>
+            <option value="ai">vs AI</option>
+          </select>
+        </div>
       </div>
 
       <div class="moves">
@@ -46,6 +53,7 @@
 import { Component, Vue, Provide } from "vue-property-decorator";
 import Board from "./Board.vue";
 import { STATE } from "@/constants";
+import { Strategy } from "@/best-strategy";
 
 const PLAYER_X = "X";
 const PLAYER_O = "O";
@@ -71,9 +79,16 @@ export default class Game extends Vue {
   @Provide()
   endGame = false;
 
+  @Provide()
+  strategy: Strategy;
+
+  @Provide()
+  opponent = "player";
+
   mounted() {
     this.board = Array(9).fill("");
     this.histories = [[...this.board]];
+    this.strategy = new Strategy(this.board, PLAYER_O, PLAYER_X);
   }
 
   changePlayer() {
@@ -150,7 +165,7 @@ h1 {
       margin-bottom: 0.5rem;
 
       .info {
-        flex: 0 0 33.33%;
+        flex: 0 0 25%;
         font-size: 1.25rem;
 
         &.winner {
@@ -162,6 +177,11 @@ h1 {
         display: flex;
         justify-content: flex-end;
         align-items: flex-start;
+
+        select {
+          height: 2rem;
+          padding: 0 0.25rem;
+        }
       }
     }
 
