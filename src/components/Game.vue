@@ -23,7 +23,7 @@
         </div>
       </div>
 
-      <div class="moves">
+      <div class="moves" v-if="opponent === 'player'">
         <button
           class="button"
           v-for="(_, i) of histories"
@@ -40,6 +40,7 @@
           :board="board"
           :histories="histories"
           :endGame="endGame"
+          :opponent="opponent"
           @changePlayer="changePlayer"
           @announcementWinner="announceWinner"
           @allMoves="generateMoves"
@@ -52,11 +53,8 @@
 <script lang="ts">
 import { Component, Vue, Provide } from "vue-property-decorator";
 import Board from "./Board.vue";
-import { STATE } from "@/constants";
+import { STATE, PLAYER_X, PLAYER_O } from "@/constants";
 import { Strategy } from "@/best-strategy";
-
-const PLAYER_X = "X";
-const PLAYER_O = "O";
 
 @Component({
   components: {
@@ -85,10 +83,13 @@ export default class Game extends Vue {
   @Provide()
   opponent = "player";
 
+  @Provide()
+  hasComputerWon = false;
+
   mounted() {
     this.board = Array(9).fill("");
     this.histories = [[...this.board]];
-    this.strategy = new Strategy(this.board, PLAYER_O, PLAYER_X);
+    this.strategy = new Strategy(PLAYER_O, PLAYER_X);
   }
 
   changePlayer() {
@@ -116,6 +117,20 @@ export default class Game extends Vue {
   generateMoves(histories: string[][]) {
     this.histories = [...histories];
     this.board = [...this.histories[this.histories.length - 1]];
+
+    if (
+      !this.endGame &&
+      this.opponent !== "player" &&
+      this.nextPlayer === PLAYER_O
+    ) {
+      const move = this.strategy.findBestMove(this.board);
+      console.log("move", move);
+      const { idx } = move;
+      const prevBoard = [...this.board];
+      prevBoard[idx] = this.nextPlayer;
+      this.board = prevBoard;
+      this.changePlayer();
+    }
   }
 
   goBackToMove(event: Event, idx: number) {
@@ -158,14 +173,17 @@ h1 {
     grid-gap: 0.5rem;
 
     .play-container {
-      grid-area: player;
-      display: flex;
       padding: 0.5rem;
       margin-top: 0.5rem;
       margin-bottom: 0.5rem;
 
+      grid-area: player;
+
+      display: flex;
+      flex-wrap: wrap;
+
       .info {
-        flex: 0 0 25%;
+        flex: 0 0 50%;
         font-size: 1.25rem;
 
         &.winner {
@@ -175,7 +193,6 @@ h1 {
 
       div.info {
         display: flex;
-        justify-content: flex-end;
         align-items: flex-start;
 
         select {

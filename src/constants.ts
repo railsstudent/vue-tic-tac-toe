@@ -3,3 +3,6 @@ export enum STATE {
   ONGOING,
   TIED
 }
+
+export const PLAYER_X = "X";
+export const PLAYER_O = "O";

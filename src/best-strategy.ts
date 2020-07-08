@@ -1,82 +1,86 @@
 import { Move } from "@/types";
 
 const MAXIMIZE_SCORE = 10;
+const dimensions = 3;
 
 export class Strategy {
-  private multiArrayBoard: string[][];
-  constructor(
-    board: string[],
-    private player: string,
-    private opponent: string
-  ) {
-    this.multiArrayBoard = [];
-    this.multiArrayBoard.push([board[0], board[1], board[2]]);
-    this.multiArrayBoard.push([board[3], board[4], board[5]]);
-    this.multiArrayBoard.push([board[6], board[7], board[8]]);
+  constructor(private player: string, private opponent: string) {}
 
-    console.log("multiArrayBoard", this.multiArrayBoard);
+  private isMovesLeft(board: string[]) {
+    return board.filter(b => b === "").length > 0;
   }
 
-  isMovesLeft() {
-    return this.multiArrayBoard.reduce(
-      (acc, row) => acc + row.filter(r => r === "").length,
-      0
-    );
-  }
+  private evaluate(board: string[]) {
+    const hort = [
+      [0, 1, 2],
+      [3, 4, 5],
+      [6, 7, 8]
+    ];
 
-  evaluate() {
     // check for horizontal victory
-    for (let i = 0; i < this.multiArrayBoard.length; i++) {
-      if (
-        this.multiArrayBoard[i][0] === this.multiArrayBoard[i][1] &&
-        this.multiArrayBoard[i][1] === this.multiArrayBoard[i][2]
-      ) {
-        if (this.multiArrayBoard[i][0] === this.player) {
+    for (let i = 0; i < hort.length; i++) {
+      const row = hort[i];
+      if (board[row[0]] === board[row[1]] && board[row[1]] === board[row[2]]) {
+        if (board[row[0]] === this.player) {
           return MAXIMIZE_SCORE;
-        } else if (this.multiArrayBoard[i][0] == this.opponent) {
+        } else if (board[row[0]] == this.opponent) {
           return -MAXIMIZE_SCORE;
         }
       }
     }
+
+    const vert = [
+      [0, 3, 6],
+      [1, 4, 7],
+      [2, 5, 8]
+    ];
 
     // check for vertical victory
-    for (let i = 0; i < this.multiArrayBoard.length; i++) {
+    for (let i = 0; i < vert.length; i++) {
+      const column = vert[i];
       if (
-        this.multiArrayBoard[0][i] === this.multiArrayBoard[1][i] &&
-        this.multiArrayBoard[1][i] === this.multiArrayBoard[2][i]
+        board[column[0]] === board[column[1]] &&
+        board[column[1]] === board[column[2]]
       ) {
-        if (this.multiArrayBoard[0][i] === this.player) {
+        if (board[column[0]] === this.player) {
           return MAXIMIZE_SCORE;
-        } else if (this.multiArrayBoard[0][i] == this.opponent) {
+        } else if (board[column[0]] == this.opponent) {
           return -MAXIMIZE_SCORE;
         }
       }
     }
+
+    const leftDiag = [0, 4, 7];
 
     // Checking for Diagonals for X or O victory.
     if (
-      this.multiArrayBoard[0][0] == this.multiArrayBoard[1][1] &&
-      this.multiArrayBoard[1][1] == this.multiArrayBoard[2][2]
+      board[leftDiag[0]] === board[leftDiag[1]] &&
+      board[leftDiag[1]] === board[leftDiag[2]]
     ) {
-      if (this.multiArrayBoard[0][0] == this.player) return MAXIMIZE_SCORE;
-      else if (this.multiArrayBoard[0][0] == this.opponent)
+      if (board[leftDiag[0]] === this.player) {
+        return MAXIMIZE_SCORE;
+      } else if (board[leftDiag[0]] === this.opponent) {
         return -MAXIMIZE_SCORE;
+      }
     }
 
+    const rightDiag = [6, 4, 2];
     if (
-      this.multiArrayBoard[0][2] == this.multiArrayBoard[1][1] &&
-      this.multiArrayBoard[1][1] == this.multiArrayBoard[2][0]
+      board[rightDiag[0]] == board[rightDiag[1]] &&
+      board[rightDiag[1]] == board[rightDiag[2]]
     ) {
-      if (this.multiArrayBoard[0][0] == this.player) return MAXIMIZE_SCORE;
-      else if (this.multiArrayBoard[0][0] == this.opponent)
+      if (board[rightDiag[0]] === this.player) {
+        return MAXIMIZE_SCORE;
+      } else if (board[rightDiag[0]] === this.opponent) {
         return -MAXIMIZE_SCORE;
+      }
     }
 
     return 0;
   }
 
-  minimax(depth: number, isMax: boolean) {
-    const score = this.evaluate();
+  private minimax(board: string[], depth: number, isMax: boolean) {
+    const score = this.evaluate(board);
 
     // If Maximizer has won the game
     // return his/her evaluated score
@@ -92,7 +96,7 @@ export class Strategy {
 
     // If there are no more moves and
     // no winner then it is a tie
-    if (!this.isMovesLeft()) {
+    if (!this.isMovesLeft(board)) {
       return 0;
     }
 
@@ -101,17 +105,18 @@ export class Strategy {
       let best = -1000;
 
       // Traverse all cells
-      for (let i = 0; i < this.multiArrayBoard.length; i++) {
-        for (let j = 0; j < this.multiArrayBoard[i].length; j++) {
+      for (let i = 0; i < dimensions; i++) {
+        for (let j = 0; j < dimensions; j++) {
+          const idx = i * dimensions + j;
           // Check if cell is empty
-          if (this.multiArrayBoard[i][j] === "") {
+          if (board[idx] === "") {
             // Make the move
-            this.multiArrayBoard[i][j] = this.player;
+            board[idx] = this.player;
             // Call minimax recursively and choose
             // the maximum value
-            best = Math.max(best, this.minimax(depth + 1, !isMax));
+            best = Math.max(best, this.minimax(board, depth + 1, !isMax));
             // Undo the move
-            this.multiArrayBoard[i][j] = "";
+            board[idx] = "";
           }
         }
       }
@@ -121,19 +126,21 @@ export class Strategy {
       let best = 1000;
 
       // Traverse all cells
-      for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
+      for (let i = 0; i < dimensions; i++) {
+        for (let j = 0; j < dimensions; j++) {
+          const idx = i * dimensions + j;
+
           // Check if cell is empty
-          if (this.multiArrayBoard[i][j] == "") {
+          if (board[idx] == "") {
             // Make the move
-            this.multiArrayBoard[i][j] = this.opponent;
+            board[idx] = this.opponent;
 
             // Call minimax recursively and choose
             // the minimum value
-            best = Math.min(best, this.minimax(depth + 1, !isMax));
+            best = Math.min(best, this.minimax(board, depth + 1, !isMax));
 
             // Undo the move
-            this.multiArrayBoard[i][j] = "";
+            board[idx] = "";
           }
         }
       }
@@ -141,27 +148,29 @@ export class Strategy {
     }
   }
 
-  findBestMove() {
+  findBestMove(board: string[]) {
     const bestMove: Move = {
       idx: -1,
       score: -1000
     };
 
-    for (let i = 0; i < this.multiArrayBoard.length; i++) {
-      for (let j = 0; j < this.multiArrayBoard[i].length; j++) {
+    for (let i = 0; i < dimensions; i++) {
+      for (let j = 0; j < dimensions; j++) {
+        const idx = i * dimensions + j;
+
         // Check if cell is empty
-        if (this.multiArrayBoard[i][j] === "") {
+        if (board[idx] === "") {
           // Make the move
-          this.multiArrayBoard[i][j] = this.player;
+          board[idx] = this.player;
           // Call minimax recursively and choose
           // the maximum value
-          const best = this.minimax(0, false);
+          const best = this.minimax(board, 0, false);
           // Undo the move
-          this.multiArrayBoard[i][j] = "";
+          board[idx] = "";
 
           if (best > bestMove.score) {
             bestMove.score = best;
-            bestMove.idx = i * this.multiArrayBoard[i].length + j;
+            bestMove.idx = idx;
           }
         }
       }

@@ -15,7 +15,7 @@
 <script lang="ts">
 import { Component, Vue, Provide, Prop, Watch } from "vue-property-decorator";
 import Square from "./Square.vue";
-import { STATE } from "@/constants";
+import { STATE, PLAYER_O } from "@/constants";
 import { Direction } from "@/types";
 
 @Component({
@@ -45,6 +45,9 @@ export default class Board extends Vue {
   @Prop()
   endGame: boolean;
 
+  @Prop({ default: "player" })
+  opponent: string;
+
   @Watch("endGame", { immediate: true })
   endGameUpdated() {
     if (!this.endGame) {
@@ -63,6 +66,10 @@ export default class Board extends Vue {
 
   update(index: number) {
     if (this.gameState !== STATE.ONGOING) {
+      return;
+    }
+
+    if (this.opponent !== "player" && this.nextPlayer === PLAYER_O) {
       return;
     }
 
