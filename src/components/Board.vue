@@ -48,12 +48,38 @@ export default class Board extends Vue {
   @Prop({ default: "player" })
   opponent: string;
 
+  get boardAndEndGame() {
+    return {
+      endGame: this.endGame,
+      board: this.board
+    };
+  }
+
   @Watch("endGame", { immediate: true })
   endGameUpdated() {
     if (!this.endGame) {
       this.gameState = STATE.ONGOING;
       this.which = [];
       this.direction = undefined;
+    }
+  }
+
+  @Watch("boardAndEndGame", { immediate: true, deep: true })
+  boardUpdated(val: { endGame: boolean; board: string[] }) {
+    const { endGame, board } = val;
+    const numOccupiedCells = board.filter(b => b !== "").length;
+    const aiMadeMove = numOccupiedCells > 0 && numOccupiedCells % 2 === 0;
+    if (!endGame && this.opponent !== "player" && aiMadeMove) {
+      const { state, which = [], direction = undefined } =
+        this.checkWinner(board) || {};
+      this.gameState = state;
+      this.which = which;
+      this.direction = direction;
+      if (this.gameState === STATE.ONGOING) {
+        this.$emit("changePlayer");
+      } else {
+        this.$emit("announcementWinner", this.gameState);
+      }
     }
   }
 

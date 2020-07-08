@@ -83,9 +83,6 @@ export default class Game extends Vue {
   @Provide()
   opponent = "player";
 
-  @Provide()
-  hasComputerWon = false;
-
   mounted() {
     this.board = Array(9).fill("");
     this.histories = [[...this.board]];
@@ -129,7 +126,6 @@ export default class Game extends Vue {
       const prevBoard = [...this.board];
       prevBoard[idx] = this.nextPlayer;
       this.board = prevBoard;
-      this.changePlayer();
     }
   }
 
