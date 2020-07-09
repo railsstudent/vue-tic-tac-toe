@@ -34,6 +34,7 @@
           {{ i !== 0 ? `Move ${i}` : "Start Game" }}
         </button>
       </div>
+      <div class="moves empty" v-else></div>
       <div class="left">
         <Board
           :nextPlayer="nextPlayer"
@@ -187,7 +188,7 @@ h1 {
         }
 
         label.opponent {
-          margin-right: 0.5rem;
+          margin-right: 0.5 rem;
         }
       }
 
@@ -230,18 +231,20 @@ h1 {
     }
 
     .moves {
+      grid-area: moves;
+      border: 2px solid rebeccapurple;
+
       padding: 0.5rem 0.5rem 0 0.5rem;
       display: flex;
       flex-direction: column;
+
+      &.empty {
+        height: auto;
+      }
     }
 
     .game {
       grid-area: game;
-    }
-
-    .moves {
-      grid-area: moves;
-      border: 2px solid rebeccapurple;
     }
   }
 }
@@ -281,6 +284,10 @@ h1 {
         margin-right: 0.25rem;
         flex: 1 0 20%;
         width: 0;
+      }
+
+      &.empty {
+        height: 1.5rem;
       }
     }
   }
