@@ -85,13 +85,13 @@ export class Strategy {
     // If Maximizer has won the game
     // return his/her evaluated score
     if (score === MAXIMIZE_SCORE) {
-      return score;
+      return score - depth;
     }
 
     // If Minimizer has won the game
     // return his/her evaluated score
     if (score === -MAXIMIZE_SCORE) {
-      return score;
+      return score + depth;
     }
 
     // If there are no more moves and

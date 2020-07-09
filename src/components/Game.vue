@@ -15,7 +15,7 @@
           </button>
         </div>
         <div class="info">
-          {{ opponent }}
+          <label class="opponent">Opponent: </label>
           <select v-model="opponent" :disabled="!endGame">
             <option value="player">vs Human</option>
             <option value="ai">vs AI</option>
@@ -184,6 +184,10 @@ h1 {
 
         &.winner {
           font-weight: 600;
+        }
+
+        label.opponent {
+          margin-right: 0.5rem;
         }
       }
 
