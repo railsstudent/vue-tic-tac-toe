@@ -188,7 +188,7 @@ h1 {
         }
 
         label.opponent {
-          margin-right: 0.5 rem;
+          margin-right: 0.5rem;
         }
       }
 
