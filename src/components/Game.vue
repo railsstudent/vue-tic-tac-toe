@@ -8,7 +8,7 @@
         <div class="info">
           <button
             class="button new-game"
-            :disabled="!endGame"
+            :disabled="disableControls"
             @click="startGame"
           >
             New Game
@@ -16,14 +16,14 @@
         </div>
         <div class="info">
           <label class="opponent">Opponent: </label>
-          <select v-model="opponent" :disabled="!endGame">
+          <select v-model="opponent" :disabled="disableControls">
             <option value="player">vs Human</option>
             <option value="ai">vs AI</option>
           </select>
         </div>
       </div>
 
-      <div class="moves" v-if="opponent === 'player'">
+      <div class="moves" v-if="prevOpponent === 'player'">
         <button
           class="button"
           v-for="(_, i) of histories"
@@ -76,7 +76,7 @@ export default class Game extends Vue {
   winner = "N/A";
 
   @Provide()
-  endGame = false;
+  endGame = true;
 
   @Provide()
   strategy: Strategy;
@@ -84,10 +84,20 @@ export default class Game extends Vue {
   @Provide()
   opponent = "player";
 
+  @Provide()
+  newGameClicked = false;
+
+  @Provide()
+  prevOpponent = "";
+
   mounted() {
     this.board = Array(9).fill("");
     this.histories = [[...this.board]];
     this.strategy = new Strategy(PLAYER_O, PLAYER_X);
+  }
+
+  get disableControls() {
+    return !this.endGame && this.newGameClicked;
   }
 
   changePlayer() {
@@ -98,18 +108,22 @@ export default class Game extends Vue {
     if (state == STATE.WINNER) {
       this.winner = this.nextPlayer;
       this.endGame = true;
+      this.newGameClicked = false;
     } else if (state === STATE.TIED) {
       this.winner = "tied";
       this.endGame = true;
+      this.newGameClicked = false;
     }
   }
 
   startGame() {
     this.endGame = false;
+    this.newGameClicked = true;
     this.nextPlayer = PLAYER_X;
     this.winner = "N/A";
     this.histories = [Array(9).fill("")];
     this.board = [...this.histories[this.histories.length - 1]];
+    this.prevOpponent = this.opponent;
   }
 
   generateMoves(histories: string[][]) {

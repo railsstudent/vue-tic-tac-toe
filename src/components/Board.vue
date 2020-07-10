@@ -91,7 +91,7 @@ export default class Board extends Vue {
   }
 
   update(index: number) {
-    if (this.gameState !== STATE.ONGOING) {
+    if (this.endGame || this.gameState !== STATE.ONGOING) {
       return;
     }
 
