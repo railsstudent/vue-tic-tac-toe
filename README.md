@@ -36,5 +36,5 @@ See [Configuration Reference](https://cli.vuejs.org/config/).
 ### Netlify site
 https://suspicious-bohr-1b4ec1.netlify.app/
 
-Github page
+### Github page
 https://railsstudent.github.io/vue-tic-tac-toe/
