@@ -2,32 +2,18 @@
   <div class="game">
     <h1>Vue Tic Tac Toe</h1>
     <div class="main-container">
-      <div class="play-container">
-        <p class="info">Next Player: {{ nextPlayer }}</p>
-        <p class="info winner">Winner: {{ winner }}</p>
-        <div class="info">
-          <button
-            class="button new-game"
-            :disabled="disableControls"
-            @click="startGame"
-          >
-            New Game
-          </button>
-        </div>
-        <div class="info">
-          <label class="opponent">Opponent: </label>
-          <select v-model="opponent" :disabled="disableControls">
-            <option value="player">vs Human</option>
-            <option value="ai">vs AI</option>
-          </select>
-        </div>
-      </div>
+      <GameSelector
+        :nextPlayer="nextPlayer"
+        :winner="winner"
+        :disableControls="disableControls"
+        @start="startGame"
+      />
       <MovesList
         :board.sync="board"
         :histories.sync="histories"
         :nextPlayer.sync="nextPlayer"
         :endGame="endGame"
-        :opponent="prevOpponent"
+        :opponent="opponent"
       />
       <div class="left">
         <Board
@@ -49,6 +35,7 @@
 import { Component, Vue, Provide } from "vue-property-decorator";
 import Board from "./Board.vue";
 import MovesList from "./MovesList.vue";
+import GameSelector from "./GameSelector.vue";
 import { STATE, PLAYER_X, PLAYER_O } from "@/constants";
 import { Strategy } from "@/best-strategy";
 import "./styles.scss";
@@ -56,7 +43,8 @@ import "./styles.scss";
 @Component({
   components: {
     Board,
-    MovesList
+    MovesList,
+    GameSelector
   }
 })
 export default class Game extends Vue {
@@ -79,13 +67,10 @@ export default class Game extends Vue {
   strategy: Strategy;
 
   @Provide()
-  opponent = "player";
-
-  @Provide()
   newGameClicked = false;
 
   @Provide()
-  prevOpponent = "";
+  opponent = "";
 
   mounted() {
     this.board = Array(9).fill("");
@@ -113,14 +98,14 @@ export default class Game extends Vue {
     }
   }
 
-  startGame() {
+  startGame(opponent: string) {
     this.endGame = false;
     this.newGameClicked = true;
     this.nextPlayer = PLAYER_X;
     this.winner = "N/A";
     this.histories = [Array(9).fill("")];
     this.board = [...this.histories[this.histories.length - 1]];
-    this.prevOpponent = this.opponent;
+    this.opponent = opponent;
   }
 
   generateMoves(histories: string[][]) {
@@ -170,37 +155,7 @@ h1 {
     grid-gap: 0.5rem;
 
     .play-container {
-      padding: 0.5rem;
-      margin-top: 0.5rem;
-      margin-bottom: 0.5rem;
-
       grid-area: player;
-
-      display: flex;
-      flex-wrap: wrap;
-
-      .info {
-        flex: 0 0 50%;
-        font-size: 1.25rem;
-
-        &.winner {
-          font-weight: 600;
-        }
-
-        label.opponent {
-          margin-right: 0.5rem;
-        }
-      }
-
-      div.info {
-        display: flex;
-        align-items: flex-start;
-
-        select {
-          height: 2rem;
-          padding: 0 0.25rem;
-        }
-      }
     }
 
     .left {
@@ -237,24 +192,6 @@ h1 {
     .button {
       font-size: 0.85rem;
       border-radius: 5px;
-    }
-
-    .play-container {
-      flex-wrap: wrap;
-
-      .info {
-        flex-basis: 48%;
-      }
-
-      div.info {
-        justify-content: flex-start;
-        align-content: flex-start;
-      }
-    }
-
-    .moves {
-      flex-direction: row;
-      flex-wrap: wrap;
     }
   }
 
