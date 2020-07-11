@@ -1,0 +1,15 @@
+.button {
+    padding: 0.35rem 0.25rem;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+    border-radius: 10px;
+    background: lighten(lightpink, 10%);
+    border-color: lightpink;
+    width: 6rem;
+
+    &.new-game {
+        background: plum;
+        border-color: darken(plum, 10%);
+        margin-bottom: 0;
+    }
+}

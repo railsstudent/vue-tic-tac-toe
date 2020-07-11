@@ -22,19 +22,13 @@
           </select>
         </div>
       </div>
-
-      <div class="moves" v-if="prevOpponent === 'player'">
-        <button
-          class="button"
-          v-for="(_, i) of histories"
-          :key="`move-${i}`"
-          @click="goBackToMove($event, i)"
-          :disabled="endGame"
-        >
-          {{ i !== 0 ? `Move ${i}` : "Start Game" }}
-        </button>
-      </div>
-      <div class="moves empty" v-else></div>
+      <MovesList
+        :board.sync="board"
+        :histories.sync="histories"
+        :nextPlayer.sync="nextPlayer"
+        :endGame="endGame"
+        :opponent="prevOpponent"
+      />
       <div class="left">
         <Board
           :nextPlayer="nextPlayer"
@@ -54,12 +48,15 @@
 <script lang="ts">
 import { Component, Vue, Provide } from "vue-property-decorator";
 import Board from "./Board.vue";
+import MovesList from "./MovesList.vue";
 import { STATE, PLAYER_X, PLAYER_O } from "@/constants";
 import { Strategy } from "@/best-strategy";
+import "./styles.scss";
 
 @Component({
   components: {
-    Board
+    Board,
+    MovesList
   }
 })
 export default class Game extends Vue {
@@ -143,17 +140,6 @@ export default class Game extends Vue {
       this.board = prevBoard;
     }
   }
-
-  goBackToMove(event: Event, idx: number) {
-    event.preventDefault();
-    event.stopImmediatePropagation();
-    if (this.endGame) {
-      return;
-    }
-    this.board = [...this.histories[idx]];
-    this.histories.splice(idx + 1, this.histories.length - 1 - idx);
-    this.nextPlayer = idx % 2 === 0 ? PLAYER_X : PLAYER_O;
-  }
 }
 </script>
 
@@ -228,33 +214,9 @@ h1 {
       }
     }
 
-    .button {
-      padding: 0.35rem 0.25rem;
-      margin-bottom: 0.5rem;
-      font-size: 1rem;
-      border-radius: 10px;
-      background: lighten(lightpink, 10%);
-      border-color: lightpink;
-      width: 6rem;
-
-      &.new-game {
-        background: plum;
-        border-color: darken(plum, 10%);
-        margin-bottom: 0;
-      }
-    }
-
     .moves {
       grid-area: moves;
       border: 2px solid rebeccapurple;
-
-      padding: 0.5rem 0.5rem 0 0.5rem;
-      display: flex;
-      flex-direction: column;
-
-      &.empty {
-        height: auto;
-      }
     }
 
     .game {
@@ -293,16 +255,6 @@ h1 {
     .moves {
       flex-direction: row;
       flex-wrap: wrap;
-
-      .button {
-        margin-right: 0.25rem;
-        flex: 1 0 20%;
-        width: 0;
-      }
-
-      &.empty {
-        height: 1.5rem;
-      }
     }
   }
 
