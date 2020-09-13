@@ -1,5 +1,7 @@
 # vue-tic-tac-toe
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/af11b3c2-d1a3-46f9-9f5c-a033bdcdd70d/deploy-status)](https://app.netlify.com/sites/suspicious-bohr-1b4ec1/deploys)
+
 ## Project setup
 ```
 npm install
